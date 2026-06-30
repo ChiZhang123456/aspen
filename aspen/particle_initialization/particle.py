@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from aspen_zc.cross_sections.cross_section import normalize_projectile
+from aspen.collisions.cross_section import normalize_projectile
 
 
 def _as_vector3(value: object, name: str) -> np.ndarray:

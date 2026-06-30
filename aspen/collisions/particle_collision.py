@@ -12,7 +12,7 @@ from typing import Any, Mapping
 
 import numpy as np
 
-from aspen_zc.constants import ELEMENTARY_CHARGE_C
+from aspen.constants import ELEMENTARY_CHARGE_C
 
 from ._reaction_common import projectile_from_charge_state
 from .charge_exchange import charge_exchange
@@ -89,7 +89,7 @@ def apply_random_collision_to_particle(
     Parameters
     ----------
     particle
-        Particle from `aspen_zc.particle_initialization`.
+        Particle from `aspen.particle_initialization`.
     density_m3
         Local neutral density dictionary in m^-3.
     random_target, random_reaction, random_scattering

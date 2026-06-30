@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from aspen_zc import (  # noqa: E402
+from aspen import (  # noqa: E402
     Particle,
     flatten_trace_history,
     particle_altitude_km,
@@ -18,11 +18,11 @@ from aspen_zc import (  # noqa: E402
     trace_particle_xyz_until_stop,
     write_history_csv,
 )
-from aspen_zc.constants import MARS_RADIUS_KM  # noqa: E402
+from aspen.constants import MARS_RADIUS_KM  # noqa: E402
 
 
 def main() -> None:
-    output_dir = PROJECT_ROOT / "aspen_zc_examples" / "single_particle_quick_start"
+    output_dir = PROJECT_ROOT / "aspen_examples" / "single_particle_quick_start"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     rng = np.random.default_rng(7)

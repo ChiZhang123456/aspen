@@ -11,8 +11,8 @@ from typing import Mapping
 
 import numpy as np
 
-from aspen_zc.cross_sections.collision_frequency import speed_from_energy
-from aspen_zc.cross_sections.cross_section import (
+from aspen.collisions.collision_frequency import speed_from_energy
+from aspen.collisions.cross_section import (
     DEFAULT_CROSS_SECTION_DIR,
     REACTIONS,
     TARGETS,
@@ -21,9 +21,9 @@ from aspen_zc.cross_sections.cross_section import (
     normalize_reaction,
     normalize_target,
 )
-from aspen_zc.cross_sections.particle_collision import apply_random_collision_to_particle
-from aspen_zc.neutral_density_model import neutral_density, neutral_density_xyz
-from aspen_zc.particle_initialization import Particle
+from aspen.collisions.particle_collision import apply_random_collision_to_particle
+from aspen.neutral_density_model import neutral_density, neutral_density_xyz
+from aspen.particle_initialization import Particle
 
 from .particle_state import (
     particle_energy_ev,

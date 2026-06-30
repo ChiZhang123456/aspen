@@ -9,7 +9,7 @@ For a projectile of speed `v`, the local collision coefficient is
 with units of `m^-1`. The collision frequency is `v * alpha` in `s^-1`, and
 the mean free path is `1 / alpha`.
 
-Neutral densities come from `aspen_zc.neutral_density_model`, which combines
+Neutral densities come from `aspen.neutral_density_model`, which combines
 MGITM cold neutrals with MAMPS hot atomic oxygen when `include_hot_o=True`.
 """
 
@@ -17,9 +17,9 @@ from pathlib import Path
 
 import numpy as np
 
-from aspen_zc.constants import ELEMENTARY_CHARGE_C, HYDROGEN_MASS_KG
+from aspen.constants import ELEMENTARY_CHARGE_C, HYDROGEN_MASS_KG
 
-from aspen_zc.neutral_density_model import neutral_density
+from aspen.neutral_density_model import neutral_density
 from .cross_section import (
     DEFAULT_CROSS_SECTION_DIR,
     REACTIONS,

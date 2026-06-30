@@ -5,7 +5,7 @@ This subpackage combines:
 - MGITM cold neutral atmosphere from `gitm.py`
 - MAMPS hot atomic oxygen from `amps.py`
 
-All packaged data are stored in `aspen_zc/neutral_density_model/data` as `.mat`
+All packaged data are stored in `aspen/neutral_density_model/data` as `.mat`
 files, converted from the large source `.dat` files under:
 
 - `D:/Work_Work/Mars/MAVEN/test_particle_jl/neutral/MGITM`
@@ -16,8 +16,8 @@ Recommended public calls
 For separate components:
 
 ```python
-from aspen_zc.neutral_density_model.gitm import gitm_density
-from aspen_zc.neutral_density_model.amps import amps_density
+from aspen.neutral_density_model.gitm import gitm_density
+from aspen.neutral_density_model.amps import amps_density
 
 cold = gitm_density(27.5, 0.0, 200.0, solar="solar_max", ls=270)
 hot = amps_density(27.5, 0.0, 1000.0, solar="solar_max", ls=270)
@@ -26,7 +26,7 @@ hot = amps_density(27.5, 0.0, 1000.0, solar="solar_max", ls=270)
 For the combined neutral model:
 
 ```python
-from aspen_zc.neutral_density_model import neutral_density
+from aspen.neutral_density_model import neutral_density
 
 rho = neutral_density(27.5, 0.0, 1000.0, solar="solar_max", ls=270)
 ```
@@ -34,8 +34,8 @@ rho = neutral_density(27.5, 0.0, 1000.0, solar="solar_max", ls=270)
 For Sun-fixed Cartesian particle positions:
 
 ```python
-from aspen_zc.constants import MARS_RADIUS_KM
-from aspen_zc.neutral_density_model import neutral_density_xyz
+from aspen.constants import MARS_RADIUS_KM
+from aspen.neutral_density_model import neutral_density_xyz
 
 rho = neutral_density_xyz(MARS_RADIUS_KM + 1000.0, 0.0, 0.0)
 ```

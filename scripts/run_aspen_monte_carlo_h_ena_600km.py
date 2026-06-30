@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from aspen_zc import MonteCarloConfig, run_one_monte_carlo_particle, summarize_monte_carlo_rows
+from aspen import MonteCarloConfig, run_one_monte_carlo_particle, summarize_monte_carlo_rows
 
 
 def _run_particle(args: tuple[int, MonteCarloConfig]) -> dict[str, object]:
@@ -99,7 +99,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("aspen_zc_examples") / "monte_carlo_h_ena_600km",
+        default=Path("aspen_examples") / "monte_carlo_h_ena_600km",
     )
     args = parser.parse_args()
 

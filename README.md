@@ -1,4 +1,4 @@
-# aspen_zc
+# aspen
 
 ASPEN-style Monte Carlo transport tools for Mars proton aurora test particles.
 
@@ -12,7 +12,13 @@ collision probability.
 Run from the repository root:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\example_run_single_particle_aspen_zc.py
+& C:\Users\Win\.conda\envs\mars\python.exe -B -m aspen
+```
+
+The same example can also be run from the script:
+
+```powershell
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\example_run_single_particle_aspen.py
 ```
 
 The example starts one H-ENA particle at 600 km:
@@ -26,7 +32,7 @@ max step = 5000 m
 Outputs are written to:
 
 ```text
-aspen_zc_examples/single_particle_quick_start
+aspen_examples/single_particle_main
 ```
 
 ## Main single-particle API
@@ -34,14 +40,14 @@ aspen_zc_examples/single_particle_quick_start
 ```python
 import numpy as np
 
-from aspen_zc import (
+from aspen import (
     Particle,
     flatten_trace_history,
     plot_particle_trace_history,
     trace_particle_xyz_until_stop,
     write_history_csv,
 )
-from aspen_zc.constants import MARS_RADIUS_KM
+from aspen.constants import MARS_RADIUS_KM
 
 rng = np.random.default_rng(7)
 
@@ -85,13 +91,13 @@ number `R` is drawn and the cumulative optical depth is reset.
 Run two particles in parallel:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_zc_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 5000
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 5000
 ```
 
 Run 5000 particles:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_zc_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000
 ```
 
 ## Data included
@@ -104,5 +110,5 @@ cross-section tables needed by the examples.
 See:
 
 ```text
-docs/aspen_zc_quick_start_zh.md
+docs/aspen_quick_start_zh.md
 ```

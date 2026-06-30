@@ -8,10 +8,10 @@ from typing import Iterable
 
 import numpy as np
 
-from aspen_zc.constants import MARS_RADIUS_KM
-from aspen_zc.cross_sections.collision_frequency import speed_from_energy
-from aspen_zc.cross_sections.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
-from aspen_zc.particle_initialization import Particle
+from aspen.constants import MARS_RADIUS_KM
+from aspen.collisions.collision_frequency import speed_from_energy
+from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
+from aspen.particle_initialization import Particle
 
 from .particle_state import particle_altitude_km, particle_energy_ev
 from .tracing import trace_particle_xyz_until_stop

@@ -13,9 +13,9 @@ from typing import Mapping
 
 import numpy as np
 
-from aspen_zc.constants import ELEMENTARY_CHARGE_C, MARS_RADIUS_KM
-from aspen_zc.cross_sections.collision_sampler import SAMPLE_REACTIONS
-from aspen_zc.cross_sections.cross_section import (
+from aspen.constants import ELEMENTARY_CHARGE_C, MARS_RADIUS_KM
+from aspen.collisions.collision_sampler import SAMPLE_REACTIONS
+from aspen.collisions.cross_section import (
     DEFAULT_CROSS_SECTION_DIR,
     PROJECTILE_INDEX,
     REACTION_INDEX,
@@ -24,10 +24,10 @@ from aspen_zc.cross_sections.cross_section import (
     load_cross_sections,
     normalize_target,
 )
-from aspen_zc.cross_sections.elastic_collision import MASS_KG
-from aspen_zc.cross_sections.particle_collision import apply_random_collision_to_particle
-from aspen_zc.neutral_density_model import neutral_density
-from aspen_zc.particle_initialization import Particle
+from aspen.collisions.elastic_collision import MASS_KG
+from aspen.collisions.particle_collision import apply_random_collision_to_particle
+from aspen.neutral_density_model import neutral_density
+from aspen.particle_initialization import Particle
 
 
 H_MASS_KG = float(MASS_KG["H"])

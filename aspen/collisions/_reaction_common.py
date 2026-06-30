@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from aspen_zc.constants import ELEMENTARY_CHARGE_C
+from aspen.constants import ELEMENTARY_CHARGE_C
 
 from .cross_section import DEFAULT_CROSS_SECTION_DIR, cross_section, normalize_target
 from .elastic_collision import MASS_KG, _orthonormal_basis

@@ -1,4 +1,4 @@
-"""Cross-section and collision helper API for `aspen_zc`.
+"""Cross-section and collision helper API for `aspen`.
 
 This subpackage contains the packaged H/H+ collision cross-section tables and
 the routines that use them: cross-section lookup, collision frequency,

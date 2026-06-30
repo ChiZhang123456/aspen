@@ -1,4 +1,4 @@
-# aspen_zc quick start
+# aspen quick start
 
 This note shows the shortest workflow for running one ASPEN test particle.
 
@@ -13,7 +13,13 @@ D:\Work_Work\Mars\MAVEN\iuvs_data_kp
 Use the Mars Python environment:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\example_run_single_particle_aspen_zc.py
+& C:\Users\Win\.conda\envs\mars\python.exe -B -m aspen
+```
+
+The same example can also be run from the script:
+
+```powershell
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\example_run_single_particle_aspen.py
 ```
 
 The example creates one particle:
@@ -41,14 +47,14 @@ Charge-state changes do not stop tracing. If H-ENA becomes H+, or H+ becomes H-E
 ```python
 import numpy as np
 
-from aspen_zc import (
+from aspen import (
     Particle,
     flatten_trace_history,
     plot_particle_trace_history,
     trace_particle_xyz_until_stop,
     write_history_csv,
 )
-from aspen_zc.constants import MARS_RADIUS_KM
+from aspen.constants import MARS_RADIUS_KM
 
 rng = np.random.default_rng(7)
 
@@ -130,11 +136,11 @@ It is always between 0 and 1.
 ## 5. Run two particles in parallel
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_zc_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 5000 --output-dir aspen_zc_examples\monte_carlo_h_ena_600km_2p_step5km
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 5000 --output-dir aspen_examples\monte_carlo_h_ena_600km_2p_step5km
 ```
 
 For a larger run, increase `--n-particles` and `--workers`.
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_zc_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000 --output-dir aspen_zc_examples\monte_carlo_h_ena_600km_5000p
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000 --output-dir aspen_examples\monte_carlo_h_ena_600km_5000p
 ```

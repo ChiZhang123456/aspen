@@ -36,7 +36,7 @@ from .simulation import (
     write_history_csv,
 )
 from .plotting_results import plot_particle_trace_history
-from .cross_sections import (
+from .collisions import (
     apply_random_collision_to_particle,
     charge_exchange,
     collision_frequency,
