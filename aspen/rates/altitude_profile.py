@@ -1,16 +1,6 @@
 from __future__ import annotations
 
-"""Compute 1D altitude profiles from ASPEN Monte Carlo histories.
-
-The ionization and H Ly-alpha profiles use a flux crossing estimator:
-
-    q_j(z) = n_j(z) sum_i W_i mu_i sigma_j(E_i)
-
-where W_i is the solar-wind flux weight per Monte Carlo particle in
-m^-2 s^-1, and mu_i is the vertical or radial velocity factor. Heating from
-sampled chemical reactions is accumulated from the collision history and
-divided by altitude-bin thickness to give J m^-3 s^-1.
-"""
+"""Combine altitude profiles for ASPEN rate diagnostics."""
 
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
@@ -25,86 +15,12 @@ mpl.rcParams["mathtext.fontset"] = "dejavusans"
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aspen.constants import ELEMENTARY_CHARGE_C
-from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS, cross_section
-from aspen.neutral_density_model import neutral_density_xyz
+from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
 
-
-def altitude_bin_edges(
-    min_altitude_km: float = 100.0,
-    max_altitude_km: float = 1000.0,
-    bin_width_km: float = 10.0,
-) -> np.ndarray:
-    """Return regular altitude-bin edges in km."""
-    return np.arange(
-        float(min_altitude_km),
-        float(max_altitude_km) + 0.5 * float(bin_width_km),
-        float(bin_width_km),
-    )
-
-
-def flux_weight_per_particle(
-    solar_wind_density_m3: float,
-    solar_wind_speed_m_s: float,
-    n_particles: int,
-) -> float:
-    """Return W = n_sw * V_sw / N in m^-2 s^-1 per model particle."""
-    if n_particles <= 0:
-        raise ValueError("n_particles must be positive.")
-    return float(solar_wind_density_m3) * abs(float(solar_wind_speed_m_s)) / int(n_particles)
-
-
-def _as_float(row: Mapping[str, object], key: str, default: float = np.nan) -> float:
-    value = row.get(key, default)
-    if value in ("", None):
-        return float(default)
-    return float(value)
-
-
-def _mu(position_m: np.ndarray, velocity_m_s: np.ndarray, mode: str) -> float:
-    speed = float(np.linalg.norm(velocity_m_s))
-    radius = float(np.linalg.norm(position_m))
-    if speed <= 0.0 or radius <= 0.0:
-        return 0.0
-    radial_velocity = float(np.dot(velocity_m_s, position_m / radius))
-    key = mode.strip().lower()
-    if key == "absolute":
-        return abs(radial_velocity) / speed
-    if key == "inward":
-        return max(0.0, -radial_velocity / speed)
-    if key == "outward":
-        return max(0.0, radial_velocity / speed)
-    if key == "signed":
-        return radial_velocity / speed
-    raise ValueError("mu_mode must be 'absolute', 'inward', 'outward', or 'signed'.")
-
-
-def _bin_index(value: float, edges: np.ndarray) -> int | None:
-    index = int(np.searchsorted(edges, value, side="right") - 1)
-    if index < 0 or index >= edges.size - 1:
-        return None
-    return index
-
-
-def _rows_by_particle(rows: Iterable[Mapping[str, object]]) -> dict[int, list[Mapping[str, object]]]:
-    grouped: dict[int, list[Mapping[str, object]]] = {}
-    for row in rows:
-        pid = int(row["particle_id"])
-        grouped.setdefault(pid, []).append(row)
-    for particle_rows in grouped.values():
-        particle_rows.sort(key=lambda row: int(row["event_number"]))
-    return grouped
-
-
-def _density_at(position_m: np.ndarray, targets: Sequence[str], solar: str | int, ls: int | str, include_hot_o: bool) -> dict[str, float]:
-    return neutral_density_xyz(
-        position_m,
-        species=tuple(targets),
-        solar=solar,
-        ls=ls,
-        include_hot_o=include_hot_o,
-        position_unit="m",
-    )
+from .common import altitude_bin_edges, altitude_centers, flux_weight_per_particle, validate_altitude_edges
+from .heating_rate import compute_heating_rate_profile
+from .ionization_rate import compute_ionization_rate_profile
+from .lyman_alpha import compute_lyman_alpha_emission_profile
 
 
 def compute_altitude_rate_profiles(
@@ -119,111 +35,58 @@ def compute_altitude_rate_profiles(
     mu_mode: str = "absolute",
     cross_section_dir: str | Path = DEFAULT_CROSS_SECTION_DIR,
 ) -> list[dict[str, float]]:
-    """Compute altitude profiles from flattened Monte Carlo history rows.
-
-    Returns rows with:
-
-    - `ionization_rate_m-3_s-1`
-    - `lya_emission_rate_m-3_s-1`
-    - `chemical_heating_rate_J_m-3_s-1`
-    - `thermalization_heating_rate_J_m-3_s-1`
-    - `total_heating_rate_J_m-3_s-1`
-    """
-    edges = np.asarray(
-        altitude_edges_km if altitude_edges_km is not None else altitude_bin_edges(),
-        dtype=float,
+    """Compute ionization, heating, and H Ly-alpha altitude profiles."""
+    history_rows = list(rows)
+    edges = validate_altitude_edges(altitude_edges_km)
+    centers = altitude_centers(edges)
+    ion = compute_ionization_rate_profile(
+        history_rows,
+        altitude_edges_km=edges,
+        weight_m2_s=weight_m2_s,
+        targets=targets,
+        solar=solar,
+        ls=ls,
+        include_hot_o=include_hot_o,
+        mu_mode=mu_mode,
+        cross_section_dir=cross_section_dir,
     )
-    if edges.ndim != 1 or edges.size < 2:
-        raise ValueError("altitude_edges_km must be a 1D array with at least two edges.")
-    centers = 0.5 * (edges[:-1] + edges[1:])
-    dz_m = np.diff(edges) * 1000.0
-    nbin = centers.size
+    heat = compute_heating_rate_profile(
+        history_rows,
+        altitude_edges_km=edges,
+        weight_m2_s=weight_m2_s,
+    )
+    lya = compute_lyman_alpha_emission_profile(
+        history_rows,
+        altitude_edges_km=edges,
+        weight_m2_s=weight_m2_s,
+        targets=targets,
+        solar=solar,
+        ls=ls,
+        include_hot_o=include_hot_o,
+        mu_mode=mu_mode,
+        cross_section_dir=cross_section_dir,
+    )
 
-    ion = np.zeros((nbin, len(targets)), dtype=float)
-    lya = np.zeros((nbin, len(targets)), dtype=float)
-    chem_heat_ev_m2_s = np.zeros(nbin, dtype=float)
-    thermal_heat_ev_m2_s = np.zeros(nbin, dtype=float)
-    crossing_counts = np.zeros(nbin, dtype=int)
-    collision_counts = np.zeros(nbin, dtype=int)
-    thermal_counts = np.zeros(nbin, dtype=int)
-
-    grouped = _rows_by_particle(rows)
-    for particle_rows in grouped.values():
-        previous = None
-        for row in particle_rows:
-            event_type = str(row["event_type"])
-            if event_type == "transport" and previous is not None:
-                alt0 = _as_float(previous, "altitude_km")
-                alt1 = _as_float(row, "altitude_km")
-                if np.isfinite(alt0) and np.isfinite(alt1) and alt0 != alt1:
-                    low = min(alt0, alt1)
-                    high = max(alt0, alt1)
-                    crossed = np.where((centers >= low) & (centers <= high))[0]
-                    p0 = np.array([_as_float(previous, "x_m"), _as_float(previous, "y_m"), _as_float(previous, "z_m")])
-                    p1 = np.array([_as_float(row, "x_m"), _as_float(row, "y_m"), _as_float(row, "z_m")])
-                    vel = np.array([_as_float(row, "vx_m_s"), _as_float(row, "vy_m_s"), _as_float(row, "vz_m_s")])
-                    projectile = str(row["projectile"])
-                    energy = _as_float(row, "energy_before_ev")
-                    for ibin in crossed:
-                        frac = (centers[ibin] - alt0) / (alt1 - alt0)
-                        pos = p0 + frac * (p1 - p0)
-                        mu = _mu(pos, vel, mu_mode)
-                        if mu == 0.0:
-                            continue
-                        density = _density_at(pos, targets, solar, ls, include_hot_o)
-                        for itarget, target in enumerate(targets):
-                            n_target = float(density[target])
-                            sigma_i = float(
-                                cross_section(projectile, target, "ionization", energy, cross_section_dir)[
-                                    "sigma_m2"
-                                ]
-                            )
-                            sigma_l = float(
-                                cross_section(projectile, target, "lya", energy, cross_section_dir)[
-                                    "sigma_m2"
-                                ]
-                            )
-                            ion[ibin, itarget] += float(weight_m2_s) * mu * n_target * sigma_i
-                            lya[ibin, itarget] += float(weight_m2_s) * mu * n_target * sigma_l
-                        crossing_counts[ibin] += 1
-
-            if event_type == "collision":
-                ibin = _bin_index(_as_float(row, "altitude_km"), edges)
-                if ibin is not None:
-                    chem_heat_ev_m2_s[ibin] += float(weight_m2_s) * max(0.0, _as_float(row, "energy_loss_ev", 0.0))
-                    collision_counts[ibin] += 1
-            previous = row
-
-        if particle_rows:
-            last = particle_rows[-1]
-            if "energy_below_min" in str(last.get("stop_reason", "")):
-                ibin = _bin_index(_as_float(last, "altitude_km"), edges)
-                if ibin is not None:
-                    thermal_heat_ev_m2_s[ibin] += float(weight_m2_s) * max(0.0, _as_float(last, "energy_after_ev", 0.0))
-                    thermal_counts[ibin] += 1
-
+    ion_rate = np.asarray(ion["rate_m-3_s-1"], dtype=float)
+    lya_rate = np.asarray(lya["emission_rate_m-3_s-1"], dtype=float)
     out = []
-    ion_total = ion.sum(axis=1)
-    lya_total = lya.sum(axis=1)
-    chemical_heat = chem_heat_ev_m2_s * ELEMENTARY_CHARGE_C / dz_m
-    thermal_heat = thermal_heat_ev_m2_s * ELEMENTARY_CHARGE_C / dz_m
     for ibin, center in enumerate(centers):
         row = {
             "altitude_min_km": float(edges[ibin]),
             "altitude_max_km": float(edges[ibin + 1]),
             "altitude_center_km": float(center),
-            "ionization_rate_m-3_s-1": float(ion_total[ibin]),
-            "lya_emission_rate_m-3_s-1": float(lya_total[ibin]),
-            "chemical_heating_rate_J_m-3_s-1": float(chemical_heat[ibin]),
-            "thermalization_heating_rate_J_m-3_s-1": float(thermal_heat[ibin]),
-            "total_heating_rate_J_m-3_s-1": float(chemical_heat[ibin] + thermal_heat[ibin]),
-            "n_flux_crossings": int(crossing_counts[ibin]),
-            "n_collision_events": int(collision_counts[ibin]),
-            "n_thermalized_particles": int(thermal_counts[ibin]),
+            "ionization_rate_m-3_s-1": float(ion["total_rate_m-3_s-1"][ibin]),
+            "lya_emission_rate_m-3_s-1": float(lya["total_emission_rate_m-3_s-1"][ibin]),
+            "chemical_heating_rate_J_m-3_s-1": float(heat["chemical_heating_rate_J_m-3_s-1"][ibin]),
+            "thermalization_heating_rate_J_m-3_s-1": float(heat["thermalization_heating_rate_J_m-3_s-1"][ibin]),
+            "total_heating_rate_J_m-3_s-1": float(heat["total_heating_rate_J_m-3_s-1"][ibin]),
+            "n_flux_crossings": int(ion["n_flux_crossings"][ibin]),
+            "n_collision_events": int(heat["n_collision_events"][ibin]),
+            "n_thermalized_particles": int(heat["n_thermalized_particles"][ibin]),
         }
         for itarget, target in enumerate(targets):
-            row[f"ionization_rate_{target}_m-3_s-1"] = float(ion[ibin, itarget])
-            row[f"lya_emission_rate_{target}_m-3_s-1"] = float(lya[ibin, itarget])
+            row[f"ionization_rate_{target}_m-3_s-1"] = float(ion_rate[ibin, itarget])
+            row[f"lya_emission_rate_{target}_m-3_s-1"] = float(lya_rate[ibin, itarget])
         out.append(row)
     return out
 
