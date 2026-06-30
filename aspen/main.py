@@ -26,7 +26,7 @@ from aspen import (
 def run_single_particle_example(
     output_dir: str | Path = "aspen_examples/single_particle_main",
     seed: int = 7,
-    max_step_m: float = 5000.0,
+    max_step_m: float = 1000.0,
 ) -> dict[str, object]:
     """Trace one H-ENA particle from 600 km and save CSV plus figure."""
     output_path = Path(output_dir)

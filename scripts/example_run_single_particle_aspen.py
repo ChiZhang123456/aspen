@@ -46,7 +46,7 @@ def main() -> None:
 
     result = trace_particle_xyz_until_stop(
         particle,
-        max_step_m=5000.0,
+        max_step_m=1000.0,
         rng=rng,
     )
 

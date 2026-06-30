@@ -29,7 +29,7 @@ species: H-ENA
 initial altitude: 600 km
 initial position: [(Mars radius + 600 km), 0, 0] m
 initial velocity: [-400000, 0, 0] m/s
-max step: 5000 m
+max step: 1000 m
 ```
 
 The tracing stops only when:
@@ -71,7 +71,7 @@ particle = Particle(
 
 result = trace_particle_xyz_until_stop(
     particle,
-    max_step_m=5000.0,
+    max_step_m=1000.0,
     rng=rng,
 )
 
@@ -136,11 +136,11 @@ It is always between 0 and 1.
 ## 5. Run two particles in parallel
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 5000 --output-dir aspen_examples\monte_carlo_h_ena_600km_2p_step5km
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 1000 --output-dir aspen_examples\monte_carlo_h_ena_600km_2p_step1km
 ```
 
 For a larger run, increase `--n-particles` and `--workers`.
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000 --output-dir aspen_examples\monte_carlo_h_ena_600km_5000p
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 1000 --output-dir aspen_examples\monte_carlo_h_ena_600km_5000p
 ```

@@ -102,6 +102,8 @@ def main() -> None:
         default=Path("aspen_examples") / "monte_carlo_h_ena_600km",
     )
     args = parser.parse_args()
+    if args.max_step_m > 1000.0:
+        raise ValueError("max_step_m must be <= 1000 m for ASPEN production runs.")
 
     config = MonteCarloConfig(
         n_particles=args.n_particles,

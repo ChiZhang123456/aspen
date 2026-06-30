@@ -147,14 +147,16 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--sw-density-cm3", type=float, default=1.0)
     parser.add_argument("--sw-speed-km-s", type=float, default=400.0)
-    parser.add_argument("--max-step-m", type=float, default=10_000.0)
+    parser.add_argument("--max-step-m", type=float, default=1000.0)
     parser.add_argument("--safety-factor", type=float, default=0.4)
-    parser.add_argument("--max-collisions", type=int, default=10_000)
+    parser.add_argument("--max-collisions", type=int, default=2000)
     parser.add_argument("--max-steps-per-collision", type=int, default=100_000)
     parser.add_argument("--alt-bin-km", type=float, default=10.0)
     parser.add_argument("--mu-mode", choices=("absolute", "inward", "outward", "signed"), default="absolute")
     parser.add_argument("--output-dir", type=Path, default=Path("aspen_examples") / "monte_carlo_rates_1000")
     args = parser.parse_args()
+    if args.max_step_m > 1000.0:
+        raise ValueError("max_step_m must be <= 1000 m for ASPEN production runs.")
 
     config = MonteCarloConfig(
         n_particles=args.n_particles,

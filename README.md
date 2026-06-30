@@ -26,7 +26,7 @@ The example starts one H-ENA particle at 600 km:
 ```text
 position = [(Mars radius + 600 km), 0, 0] m
 velocity = [-400000, 0, 0] m/s
-max step = 5000 m
+max step = 1000 m
 ```
 
 Outputs are written to:
@@ -64,7 +64,7 @@ particle = Particle(
 
 result = trace_particle_xyz_until_stop(
     particle,
-    max_step_m=5000.0,
+    max_step_m=1000.0,
     rng=rng,
 )
 
@@ -91,13 +91,13 @@ number `R` is drawn and the cumulative optical depth is reset.
 Run two particles in parallel:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 5000
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 2 --workers 2 --max-step-m 1000
 ```
 
 Run 5000 particles:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 1000
 ```
 
 ## Ionization, heating, and H Ly-alpha profiles
@@ -105,7 +105,7 @@ Run 5000 particles:
 Run a 1000-particle H-ENA case from 600 km and compute altitude profiles:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_rates_1000.py --n-particles 1000 --workers 8 --sw-density-cm3 1.0 --sw-speed-km-s 400 --max-step-m 50000 --safety-factor 1.0 --max-collisions 250 --output-dir aspen_examples\monte_carlo_rates_1000_fast
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_rates_1000.py --n-particles 1000 --workers 8 --sw-density-cm3 1.0 --sw-speed-km-s 400 --max-step-m 1000 --safety-factor 0.4 --max-collisions 2000 --output-dir aspen_examples\monte_carlo_rates_1000_step1km
 ```
 
 The script uses:

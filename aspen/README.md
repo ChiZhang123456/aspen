@@ -351,7 +351,7 @@ out = advance_particle_until_collision_from_position_numba(
     solar="solar_min",
     ls=0,
     safety_factor=0.5,
-    max_step_m=5000,
+    max_step_m=1000,
 )
 ```
 
