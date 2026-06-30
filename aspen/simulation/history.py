@@ -17,6 +17,23 @@ def _altitude_km(position_m: np.ndarray) -> float:
     return float(np.linalg.norm(position_m) / 1000.0 - MARS_RADIUS_KM)
 
 
+def _velocity_fields(position_m: np.ndarray, velocity_m_s: np.ndarray) -> dict[str, float]:
+    velocity = np.asarray(velocity_m_s, dtype=float)
+    position = np.asarray(position_m, dtype=float)
+    speed = float(np.linalg.norm(velocity))
+    radius = float(np.linalg.norm(position))
+    radial_velocity = float(np.dot(velocity, position / radius)) if speed > 0.0 and radius > 0.0 else np.nan
+    inward_mu = float(max(0.0, -radial_velocity / speed)) if speed > 0.0 and np.isfinite(radial_velocity) else np.nan
+    return {
+        "vx_m_s": float(velocity[0]),
+        "vy_m_s": float(velocity[1]),
+        "vz_m_s": float(velocity[2]),
+        "speed_m_s": speed,
+        "radial_velocity_m_s": radial_velocity,
+        "inward_mu": inward_mu,
+    }
+
+
 def _collision_reaction_value(collision: dict[str, object], key: str, default: float = np.nan) -> float:
     reaction_result = collision.get("reaction_result", {})
     if isinstance(reaction_result, dict) and key in reaction_result:
@@ -43,6 +60,7 @@ def flatten_trace_history(
 
     if initial_particle is not None:
         pos = np.asarray(initial_particle.position, dtype=float)
+        vel = np.asarray(initial_particle.velocity, dtype=float)
         energy = particle_energy_ev(initial_particle)
         rows.append(
             {
@@ -59,6 +77,7 @@ def flatten_trace_history(
                 "x_km": float(pos[0] / 1000.0),
                 "y_km": float(pos[1] / 1000.0),
                 "z_km": float(pos[2] / 1000.0),
+                **_velocity_fields(pos, vel),
                 "altitude_km": particle_altitude_km(initial_particle),
                 "dl_m": 0.0,
                 "dt_s": 0.0,
@@ -85,6 +104,7 @@ def flatten_trace_history(
             cumulative_time_s += float(step["dt_s"])
             cumulative_path_m += float(step["dl_m"])
             pos = np.asarray(step["new_position_m"], dtype=float)
+            vel = np.asarray(step["velocity_m_s"], dtype=float)
             tau = float(step["cumulative_tau_after"])
             rows.append(
                 {
@@ -101,6 +121,7 @@ def flatten_trace_history(
                     "x_km": float(pos[0] / 1000.0),
                     "y_km": float(pos[1] / 1000.0),
                     "z_km": float(pos[2] / 1000.0),
+                    **_velocity_fields(pos, vel),
                     "altitude_km": _altitude_km(pos),
                     "dl_m": float(step["dl_m"]),
                     "dt_s": float(step["dt_s"]),
@@ -126,6 +147,7 @@ def flatten_trace_history(
             event_number += 1
             collision_number += 1
             pos = np.asarray(collision["position_m"], dtype=float)
+            vel = np.asarray(collision.get("velocity_after_m_s", [np.nan, np.nan, np.nan]), dtype=float)
             tau = float(collision.get("threshold_tau_before_collision", np.nan))
             rows.append(
                 {
@@ -142,6 +164,7 @@ def flatten_trace_history(
                     "x_km": float(pos[0] / 1000.0),
                     "y_km": float(pos[1] / 1000.0),
                     "z_km": float(pos[2] / 1000.0),
+                    **_velocity_fields(pos, vel),
                     "altitude_km": _altitude_km(pos),
                     "dl_m": 0.0,
                     "dt_s": 0.0,

@@ -20,6 +20,7 @@ packages = [
     "aspen.neutral_density_model",
     "aspen.particle_initialization",
     "aspen.plotting_results",
+    "aspen.rates",
     "aspen.simulation",
 ]
 

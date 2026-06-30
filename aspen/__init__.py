@@ -36,6 +36,13 @@ from .simulation import (
     write_history_csv,
 )
 from .plotting_results import plot_particle_trace_history
+from .rates import (
+    altitude_bin_edges,
+    compute_altitude_rate_profiles,
+    flux_weight_per_particle,
+    plot_altitude_rate_profiles,
+    write_rate_profile_csv,
+)
 from .collisions import (
     apply_random_collision_to_particle,
     charge_exchange,
@@ -98,6 +105,11 @@ __all__ = [
     "initialize_monte_carlo_particles",
     "flatten_trace_history",
     "plot_particle_trace_history",
+    "altitude_bin_edges",
+    "compute_altitude_rate_profiles",
+    "flux_weight_per_particle",
+    "plot_altitude_rate_profiles",
+    "write_rate_profile_csv",
     "run_one_monte_carlo_particle",
     "summarize_monte_carlo_rows",
     "trace_particle_xyz_until_stop",

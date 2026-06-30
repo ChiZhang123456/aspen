@@ -100,6 +100,50 @@ Run 5000 particles:
 & C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_h_ena_600km.py --n-particles 5000 --workers 8 --max-step-m 5000
 ```
 
+## Ionization, heating, and H Ly-alpha profiles
+
+Run a 1000-particle H-ENA case from 600 km and compute altitude profiles:
+
+```powershell
+& C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_rates_1000.py --n-particles 1000 --workers 8 --sw-density-cm3 1.0 --sw-speed-km-s 400 --max-step-m 50000 --safety-factor 1.0 --max-collisions 250 --output-dir aspen_examples\monte_carlo_rates_1000_fast
+```
+
+The script uses:
+
+```text
+Flux = n_sw * V_sw
+weight = Flux / N
+```
+
+where `weight` has units of `m^-2 s^-1 per model particle`. The default
+`n_sw = 1 cm^-3`, `V_sw = 400 km/s`, and `N = 1000` give:
+
+```text
+Flux = 4.0e11 m^-2 s^-1
+weight = 4.0e8 m^-2 s^-1 per particle
+```
+
+Outputs:
+
+```text
+particle_summary.csv          one row per particle
+particle_history.csv          transport and collision events
+altitude_rate_profiles.csv    ionization, heating, and Ly-alpha versus altitude
+altitude_rate_profiles.png    quick-look profile figure
+```
+
+The ionization and Ly-alpha rates use a flux-crossing estimator through
+altitude surfaces:
+
+```text
+q_j(z) = n_j(z) sum_i W_i mu_i sigma_j(E_i)
+```
+
+where `mu_i = |v_r| / |V|` by default. Chemical heating is accumulated from
+sampled collision energy losses and divided by altitude-bin thickness. If a
+particle stops because `energy < 10 eV`, its remaining energy is added to the
+thermalization heating term.
+
 ## Data included
 
 The package includes compact neutral atmosphere `.mat` files and collision

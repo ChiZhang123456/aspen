@@ -342,6 +342,7 @@ def advance_particle_xyz_step(
         "old_position_m": old_position,
         "new_position_m": particle.position.copy(),
         "displacement_m": displacement,
+        "velocity_m_s": velocity.copy(),
         "dl_m": float(dl_m),
         "dt_s": float(dt_s),
         "speed_m_s": speed,
@@ -411,6 +412,7 @@ def advance_particle_until_collision_xyz(
         if step["collided"]:
             density = step["mean_free_path"]["neutral_density_m-3"]
             energy_before = particle_energy_ev(particle)
+            velocity_before = np.asarray(particle.velocity, dtype=float).copy()
             random_before_collision = float(particle.R)
             threshold_tau_before_collision = float(step["threshold_tau"])
             collision = apply_random_collision_to_particle(
@@ -426,6 +428,8 @@ def advance_particle_until_collision_xyz(
             collision["energy_before_ev"] = float(energy_before)
             collision["energy_after_ev"] = float(energy_after)
             collision["energy_loss_ev"] = float(energy_before - energy_after)
+            collision["velocity_before_m_s"] = velocity_before
+            collision["velocity_after_m_s"] = np.asarray(particle.velocity, dtype=float).copy()
             collision["charge_state"] = int(particle.charge_state)
             collision["position_m"] = np.asarray(particle.position, dtype=float).copy()
             collision["random_before_collision"] = random_before_collision
