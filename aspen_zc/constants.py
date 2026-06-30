@@ -1,0 +1,7 @@
+from __future__ import annotations
+
+ELEMENTARY_CHARGE_C = 1.602176634e-19
+HYDROGEN_MASS_KG = 1.67262192369e-27
+
+MARS_RADIUS_KM = 3388.25
+

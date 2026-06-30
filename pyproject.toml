@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aspen-zc"
+version = "0.1.0"
+description = "ASPEN-style Monte Carlo transport tools for Mars proton aurora test particles."
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+]
+
+[tool.setuptools]
+packages = [
+    "aspen_zc",
+    "aspen_zc.cross_sections",
+    "aspen_zc.neutral_density_model",
+    "aspen_zc.particle_initialization",
+    "aspen_zc.plotting_results",
+    "aspen_zc.simulation",
+]
+
+[tool.setuptools.package-data]
+aspen_zc = [
+    "cross_sections/*.txt",
+    "neutral_density_model/data/*.mat",
+]
