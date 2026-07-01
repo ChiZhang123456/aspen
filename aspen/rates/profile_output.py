@@ -30,6 +30,7 @@ def combine_rate_profile_rows(
     ion = np.asarray(ionization["rate_m-3_s-1"], dtype=float)
     ion_hplus = np.asarray(ionization["hplus_rate_m-3_s-1"], dtype=float)
     ion_hena = np.asarray(ionization["h_ena_rate_m-3_s-1"], dtype=float)
+    ion_events = np.asarray(ionization["n_ionization_events"], dtype=int)
     lya = np.asarray(lyman_alpha["emission_rate_m-3_s-1"], dtype=float)
     lya_events = np.asarray(lyman_alpha["n_lya_events"], dtype=int)
     heat_by_target = np.asarray(heating["chemical_heating_rate_by_target_J_m-3_s-1"], dtype=float)
@@ -46,7 +47,7 @@ def combine_rate_profile_rows(
             "chemical_heating_rate_J_m-3_s-1": float(heating["chemical_heating_rate_J_m-3_s-1"][ibin]),
             "thermalization_heating_rate_J_m-3_s-1": float(heating["thermalization_heating_rate_J_m-3_s-1"][ibin]),
             "total_heating_rate_J_m-3_s-1": float(heating["total_heating_rate_J_m-3_s-1"][ibin]),
-            "n_ionization_flux_crossings": int(ionization["n_flux_crossings"][ibin]),
+            "n_ionization_events": int(ionization["total_ionization_events"][ibin]),
             "n_lya_events": int(lyman_alpha["total_lya_events"][ibin]),
             "n_collision_events": int(heating["n_collision_events"][ibin]),
             "n_thermalized_particles": int(heating["n_thermalized_particles"][ibin]),
@@ -55,6 +56,7 @@ def combine_rate_profile_rows(
             row[f"ionization_rate_{target}_m-3_s-1"] = float(ion[ibin, itarget])
             row[f"ionization_rate_Hplus_{target}_m-3_s-1"] = float(ion_hplus[ibin, itarget])
             row[f"ionization_rate_HENA_{target}_m-3_s-1"] = float(ion_hena[ibin, itarget])
+            row[f"n_ionization_events_{target}"] = int(ion_events[ibin, itarget])
             row[f"lya_emission_rate_{target}_m-3_s-1"] = float(lya[ibin, itarget])
             row[f"n_lya_events_{target}"] = int(lya_events[ibin, itarget])
             row[f"chemical_heating_rate_{target}_J_m-3_s-1"] = float(heat_by_target[ibin, itarget])

@@ -147,8 +147,9 @@ def flatten_trace_history(
             event_number += 1
             collision_number += 1
             pos = np.asarray(collision["position_m"], dtype=float)
-            vel = np.asarray(collision.get("velocity_after_m_s", [np.nan, np.nan, np.nan]), dtype=float)
+            vel = np.asarray(collision.get("velocity_before_m_s", [np.nan, np.nan, np.nan]), dtype=float)
             tau = float(collision.get("threshold_tau_before_collision", np.nan))
+            event_projectile = str(collision["event"].get("projectile", "H"))
             rows.append(
                 {
                     "particle_id": int(particle_id),
@@ -156,7 +157,7 @@ def flatten_trace_history(
                     "segment_index": segment_index,
                     "event_type": "collision",
                     "collision_number": collision_number,
-                    "projectile": "H+" if int(collision["charge_state"]) == 1 else "H",
+                    "projectile": event_projectile,
                     "charge_state": int(collision["charge_state"]),
                     "x_m": float(pos[0]),
                     "y_m": float(pos[1]),

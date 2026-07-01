@@ -197,9 +197,6 @@ def main() -> None:
         altitude_edges_km=altitude_edges,
         particle_weight_m3=particle_weight_m3,
         radial_velocity_mode=args.radial_velocity_mode,
-        solar=config.solar,
-        ls=config.ls,
-        include_hot_o=config.include_hot_o,
     )
     heating_profile = compute_heating_rate_profile(
         histories,
