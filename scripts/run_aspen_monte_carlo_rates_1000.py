@@ -151,12 +151,18 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--sw-density-cm3", type=float, default=1.0)
     parser.add_argument("--sw-speed-km-s", type=float, default=400.0)
+    parser.add_argument(
+        "--particle-weight-m3",
+        type=float,
+        default=None,
+        help="Density weight per model particle in m^-3. Default is sw density / N.",
+    )
     parser.add_argument("--max-step-m", type=float, default=1000.0)
     parser.add_argument("--safety-factor", type=float, default=0.4)
     parser.add_argument("--max-collisions", type=int, default=2000)
     parser.add_argument("--max-steps-per-collision", type=int, default=100_000)
     parser.add_argument("--alt-bin-km", type=float, default=10.0)
-    parser.add_argument("--mu-mode", choices=("absolute", "inward", "outward", "signed"), default="absolute")
+    parser.add_argument("--radial-velocity-mode", choices=("absolute", "inward", "outward", "signed"), default="absolute")
     parser.add_argument("--weight-unit", choices=("m-2_s-1", "m-3_s-1"), default="m-2_s-1")
     parser.add_argument("--output-dir", type=Path, default=Path("aspen_examples") / "monte_carlo_rates_1000")
     args = parser.parse_args()
@@ -178,14 +184,22 @@ def main() -> None:
     sw_speed_m_s = args.sw_speed_km_s * 1000.0
     flux_m2_s = sw_density_m3 * abs(sw_speed_m_s)
     weight_m2_s = flux_weight_per_particle(sw_density_m3, sw_speed_m_s, args.n_particles)
+    particle_weight_m3 = (
+        float(args.particle_weight_m3)
+        if args.particle_weight_m3 is not None
+        else sw_density_m3 / int(args.n_particles)
+    )
 
     summaries, histories = run_detailed_ensemble(config, workers=args.workers)
     altitude_edges = altitude_bin_edges(100.0, 1000.0, args.alt_bin_km)
     ionization_profile = compute_ionization_rate_profile(
         histories,
         altitude_edges_km=altitude_edges,
-        weight_m2_s=weight_m2_s,
-        weight_unit=args.weight_unit,
+        particle_weight_m3=particle_weight_m3,
+        radial_velocity_mode=args.radial_velocity_mode,
+        solar=config.solar,
+        ls=config.ls,
+        include_hot_o=config.include_hot_o,
     )
     heating_profile = compute_heating_rate_profile(
         histories,
@@ -213,6 +227,7 @@ def main() -> None:
     print(f"solar_wind_speed_m_s={sw_speed_m_s:.6e}")
     print(f"flux_m-2_s-1={flux_m2_s:.6e}")
     print(f"weight_m-2_s-1_per_particle={weight_m2_s:.6e}")
+    print(f"particle_weight_m-3={particle_weight_m3:.6e}")
     print(f"final_energy_mean_ev={summary['final_energy_mean_ev']:.3f}")
     print(f"n_collisions_mean={summary['n_collisions_mean']:.3f}")
     print(f"stop_reasons={summary['stop_reasons']}")

@@ -111,6 +111,24 @@ def mu_factor(position_m: np.ndarray, velocity_m_s: np.ndarray, mode: str) -> fl
     raise ValueError("mu_mode must be 'absolute', 'inward', 'outward', or 'signed'.")
 
 
+def radial_velocity_component(position_m: np.ndarray, velocity_m_s: np.ndarray, mode: str) -> float:
+    """Return a nonnegative or signed radial velocity component in m/s."""
+    radius = float(np.linalg.norm(position_m))
+    if radius <= 0.0:
+        return 0.0
+    radial_velocity = float(np.dot(velocity_m_s, position_m / radius))
+    key = mode.strip().lower()
+    if key == "absolute":
+        return abs(radial_velocity)
+    if key == "inward":
+        return max(0.0, -radial_velocity)
+    if key == "outward":
+        return max(0.0, radial_velocity)
+    if key == "signed":
+        return radial_velocity
+    raise ValueError("radial_velocity_mode must be 'absolute', 'inward', 'outward', or 'signed'.")
+
+
 def density_at(
     position_m: np.ndarray,
     targets: Sequence[str],
@@ -151,6 +169,7 @@ def iter_flux_crossings(
                 for ibin in crossed:
                     frac = (centers[ibin] - alt0) / (alt1 - alt0)
                     yield {
+                        "particle_id": int(row["particle_id"]),
                         "bin_index": int(ibin),
                         "position_m": p0 + frac * (p1 - p0),
                         "velocity_m_s": velocity,

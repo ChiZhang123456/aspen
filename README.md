@@ -108,19 +108,22 @@ Run a 1000-particle H-ENA case from 600 km and compute altitude profiles:
 & C:\Users\Win\.conda\envs\mars\python.exe -B scripts\run_aspen_monte_carlo_rates_1000.py --n-particles 1000 --workers 8 --sw-density-cm3 1.0 --sw-speed-km-s 400 --max-step-m 1000 --safety-factor 0.4 --max-collisions 2000 --output-dir aspen_examples\monte_carlo_rates_1000_step1km
 ```
 
-The script uses:
+The script keeps two useful weights:
 
 ```text
 Flux = n_sw * V_sw
-weight = Flux / N
+flux_weight = Flux / N
+particle_weight = n_sw / N
 ```
 
-where `weight` has units of `m^-2 s^-1 per model particle`. The default
+where `flux_weight` has units of `m^-2 s^-1 per model particle`, and
+`particle_weight` has units of `m^-3 per model particle`. The default
 `n_sw = 1 cm^-3`, `V_sw = 400 km/s`, and `N = 1000` give:
 
 ```text
 Flux = 4.0e11 m^-2 s^-1
-weight = 4.0e8 m^-2 s^-1 per particle
+flux_weight = 4.0e8 m^-2 s^-1 per particle
+particle_weight = 1.0e3 m^-3 per particle
 ```
 
 Outputs:
@@ -132,20 +135,24 @@ altitude_rate_profiles.csv    ionization, heating, and Ly-alpha versus altitude
 altitude_rate_profiles.png    quick-look profile figure
 ```
 
-Ionization and Ly-alpha rates are event-counting profiles. Only sampled
-collision events with `reaction = ionization` or `reaction = lya` are counted.
-The output separates targets, for example CO2, O, and N2:
+Ionization uses a density-weight trajectory estimator. For each H+ or H-ENA
+trajectory crossing in an altitude bin, the code uses the current charge state,
+energy, radial velocity, and ionization cross section:
 
 ```text
-q_target(z) = sum_events W / dz
+q_j(r) = n_j(r) * sum_i [W_i * v_r,i * sigma_j(E_i)]
 ```
 
-for the default one-dimensional column weight, where `W` has units of
-`m^-2 s^-1 per particle`. If the particle weight is already a volume rate,
-`m^-3 s^-1 per particle`, use `--weight-unit m-3_s-1`, and the code adds `W`
-directly to the bin. Chemical heating is accumulated from sampled collision
-energy losses. If a particle stops because `energy < 10 eV`, its remaining
-energy is added to the thermalization heating term.
+Here `W_i` has units of `m^-3`, `v_r` has units of `m s^-1`, and `sigma` has
+units of `m^2`, so `q_j` has units of `m^-3 s^-1`. H-ENA particles inherit the
+same weight after charge exchange, so both H+ and H-ENA contributions are kept.
+The CSV separates target species and projectile contributions, for example
+`ionization_rate_Hplus_CO2_m-3_s-1` and
+`ionization_rate_HENA_CO2_m-3_s-1`.
+
+Chemical heating and H Ly-alpha are still accumulated from sampled collision
+events. If a particle stops because `energy < 10 eV`, its remaining energy is
+added to the thermalization heating term.
 
 ## Data included
 
