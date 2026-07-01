@@ -132,17 +132,20 @@ altitude_rate_profiles.csv    ionization, heating, and Ly-alpha versus altitude
 altitude_rate_profiles.png    quick-look profile figure
 ```
 
-The ionization and Ly-alpha rates use a flux-crossing estimator through
-altitude surfaces:
+Ionization and Ly-alpha rates are event-counting profiles. Only sampled
+collision events with `reaction = ionization` or `reaction = lya` are counted.
+The output separates targets, for example CO2, O, and N2:
 
 ```text
-q_j(z) = n_j(z) sum_i W_i mu_i sigma_j(E_i)
+q_target(z) = sum_events W / dz
 ```
 
-where `mu_i = |v_r| / |V|` by default. Chemical heating is accumulated from
-sampled collision energy losses and divided by altitude-bin thickness. If a
-particle stops because `energy < 10 eV`, its remaining energy is added to the
-thermalization heating term.
+for the default one-dimensional column weight, where `W` has units of
+`m^-2 s^-1 per particle`. If the particle weight is already a volume rate,
+`m^-3 s^-1 per particle`, use `--weight-unit m-3_s-1`, and the code adds `W`
+directly to the bin. Chemical heating is accumulated from sampled collision
+energy losses. If a particle stops because `energy < 10 eV`, its remaining
+energy is added to the thermalization heating term.
 
 ## Data included
 

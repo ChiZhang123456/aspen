@@ -65,6 +65,22 @@ def bin_index(value: float, edges: np.ndarray) -> int | None:
     return index
 
 
+def event_rate_weight(weight: float, dz_m: float, weight_unit: str) -> float:
+    """Convert a particle event weight to a volume event rate.
+
+    Supported units:
+
+    - `m-2_s-1`: column flux weight. The contribution is W / dz.
+    - `m-3_s-1`: volume rate weight. The contribution is W directly.
+    """
+    key = weight_unit.strip().lower().replace("^", "")
+    if key in {"m-2_s-1", "m^-2_s^-1", "m-2 s-1", "flux"}:
+        return float(weight) / float(dz_m)
+    if key in {"m-3_s-1", "m^-3_s^-1", "m-3 s-1", "volume"}:
+        return float(weight)
+    raise ValueError("weight_unit must be 'm-2_s-1' or 'm-3_s-1'.")
+
+
 def rows_by_particle(rows: Iterable[Mapping[str, object]]) -> dict[int, list[Mapping[str, object]]]:
     """Group flattened history rows by particle id and sort by event number."""
     grouped: dict[int, list[Mapping[str, object]]] = {}

@@ -15,15 +15,19 @@ if str(PROJECT_ROOT) not in sys.path:
 from aspen import (  # noqa: E402
     MonteCarloConfig,
     Particle,
+    combine_rate_profile_rows,
+    compute_heating_rate_profile,
+    compute_ionization_rate_profile,
+    compute_lyman_alpha_emission_profile,
     flatten_trace_history,
     flux_weight_per_particle,
-    plot_altitude_rate_profiles,
+    plot_rate_profiles,
     summarize_monte_carlo_rows,
     trace_particle_xyz_until_stop,
     write_history_csv,
     write_rate_profile_csv,
 )
-from aspen.rates import altitude_bin_edges, compute_altitude_rate_profiles  # noqa: E402
+from aspen.rates import altitude_bin_edges  # noqa: E402
 from aspen.simulation.particle_state import particle_altitude_km, particle_energy_ev  # noqa: E402
 
 
@@ -153,6 +157,7 @@ def main() -> None:
     parser.add_argument("--max-steps-per-collision", type=int, default=100_000)
     parser.add_argument("--alt-bin-km", type=float, default=10.0)
     parser.add_argument("--mu-mode", choices=("absolute", "inward", "outward", "signed"), default="absolute")
+    parser.add_argument("--weight-unit", choices=("m-2_s-1", "m-3_s-1"), default="m-2_s-1")
     parser.add_argument("--output-dir", type=Path, default=Path("aspen_examples") / "monte_carlo_rates_1000")
     args = parser.parse_args()
     if args.max_step_m > 1000.0:
@@ -175,22 +180,33 @@ def main() -> None:
     weight_m2_s = flux_weight_per_particle(sw_density_m3, sw_speed_m_s, args.n_particles)
 
     summaries, histories = run_detailed_ensemble(config, workers=args.workers)
-    rate_rows = compute_altitude_rate_profiles(
+    altitude_edges = altitude_bin_edges(100.0, 1000.0, args.alt_bin_km)
+    ionization_profile = compute_ionization_rate_profile(
         histories,
-        altitude_edges_km=altitude_bin_edges(100.0, 1000.0, args.alt_bin_km),
+        altitude_edges_km=altitude_edges,
         weight_m2_s=weight_m2_s,
-        mu_mode=args.mu_mode,
-        solar=config.solar,
-        ls=config.ls,
-        include_hot_o=config.include_hot_o,
+        weight_unit=args.weight_unit,
     )
+    heating_profile = compute_heating_rate_profile(
+        histories,
+        altitude_edges_km=altitude_edges,
+        weight_m2_s=weight_m2_s,
+        weight_unit=args.weight_unit,
+    )
+    lyman_alpha_profile = compute_lyman_alpha_emission_profile(
+        histories,
+        altitude_edges_km=altitude_edges,
+        weight_m2_s=weight_m2_s,
+        weight_unit=args.weight_unit,
+    )
+    rate_rows = combine_rate_profile_rows(ionization_profile, heating_profile, lyman_alpha_profile)
     summary = summarize_monte_carlo_rows(summaries)
 
     out = args.output_dir
     summary_csv = write_csv(summaries, out / "particle_summary.csv")
     history_csv = write_history_csv(histories, out / "particle_history.csv")
     rate_csv = write_rate_profile_csv(rate_rows, out / "altitude_rate_profiles.csv")
-    rate_png = plot_altitude_rate_profiles(rate_rows, out / "altitude_rate_profiles.png")
+    rate_png = plot_rate_profiles(rate_rows, out / "altitude_rate_profiles.png")
 
     print(f"n_particles={summary['n_particles']}")
     print(f"solar_wind_density_m3={sw_density_m3:.6e}")

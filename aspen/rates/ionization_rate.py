@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-"""Ionization rate profile from Monte Carlo transport histories."""
+"""Ionization rate profile from sampled ionization events."""
 
 from collections.abc import Iterable, Mapping, Sequence
-from pathlib import Path
 
 import numpy as np
 
-from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS, cross_section
+from aspen.collisions.cross_section import TARGETS
 
-from .common import density_at, iter_flux_crossings, mu_factor, rows_by_particle, validate_altitude_edges
+from .common import as_float, bin_index, event_rate_weight, validate_altitude_edges
 
 
 def compute_ionization_rate_profile(
@@ -17,38 +16,41 @@ def compute_ionization_rate_profile(
     *,
     altitude_edges_km: Sequence[float] | None = None,
     weight_m2_s: float,
+    weight_unit: str = "m-2_s-1",
     targets: tuple[str, ...] = TARGETS,
-    solar: str | int = "solar_min",
-    ls: int | str = 0,
-    include_hot_o: bool = True,
-    mu_mode: str = "absolute",
-    cross_section_dir: str | Path = DEFAULT_CROSS_SECTION_DIR,
 ) -> dict[str, object]:
-    """Return target-resolved ionization rate in each altitude bin."""
-    edges = validate_altitude_edges(altitude_edges_km)
-    rates = np.zeros((edges.size - 1, len(targets)), dtype=float)
-    crossing_counts = np.zeros(edges.size - 1, dtype=int)
+    """Return target-resolved ionization rate from actual collision events.
 
-    for particle_rows in rows_by_particle(rows).values():
-        for crossing in iter_flux_crossings(particle_rows, edges):
-            ibin = int(crossing["bin_index"])
-            position_m = np.asarray(crossing["position_m"], dtype=float)
-            velocity_m_s = np.asarray(crossing["velocity_m_s"], dtype=float)
-            mu = mu_factor(position_m, velocity_m_s, mu_mode)
-            if mu == 0.0:
-                continue
-            density = density_at(position_m, targets, solar, ls, include_hot_o)
-            projectile = str(crossing["projectile"])
-            energy = float(crossing["energy_ev"])
-            for itarget, target in enumerate(targets):
-                sigma = float(cross_section(projectile, target, "ionization", energy, cross_section_dir)["sigma_m2"])
-                rates[ibin, itarget] += float(weight_m2_s) * mu * float(density[target]) * sigma
-            crossing_counts[ibin] += 1
+    For a one-dimensional column model, each event contributes
+    `weight_m2_s / dz_m`, giving units of m^-3 s^-1.
+    """
+    edges = validate_altitude_edges(altitude_edges_km)
+    dz_m = np.diff(edges) * 1000.0
+    rates = np.zeros((edges.size - 1, len(targets)), dtype=float)
+    event_counts = np.zeros((edges.size - 1, len(targets)), dtype=int)
+
+    target_index = {target: i for i, target in enumerate(targets)}
+    for row in rows:
+        if str(row.get("event_type", "")) != "collision":
+            continue
+        if str(row.get("reaction", "")) != "ionization":
+            continue
+        target = str(row.get("target", ""))
+        if target not in target_index:
+            continue
+        ibin = bin_index(as_float(row, "altitude_km"), edges)
+        if ibin is None:
+            continue
+        itarget = target_index[target]
+        rates[ibin, itarget] += event_rate_weight(float(weight_m2_s), dz_m[ibin], weight_unit)
+        event_counts[ibin, itarget] += 1
 
     return {
         "altitude_edges_km": edges,
         "targets": tuple(targets),
+        "weight_unit": weight_unit,
         "rate_m-3_s-1": rates,
         "total_rate_m-3_s-1": rates.sum(axis=1),
-        "n_flux_crossings": crossing_counts,
+        "n_ionization_events": event_counts,
+        "total_ionization_events": event_counts.sum(axis=1),
     }

@@ -38,12 +38,12 @@ from .simulation import (
 from .plotting_results import plot_particle_trace_history
 from .rates import (
     altitude_bin_edges,
-    compute_altitude_rate_profiles,
+    combine_rate_profile_rows,
     compute_heating_rate_profile,
     compute_ionization_rate_profile,
     compute_lyman_alpha_emission_profile,
     flux_weight_per_particle,
-    plot_altitude_rate_profiles,
+    plot_rate_profiles,
     write_rate_profile_csv,
 )
 from .collisions import (
@@ -116,12 +116,12 @@ __all__ = [
     "flatten_trace_history",
     "plot_particle_trace_history",
     "altitude_bin_edges",
-    "compute_altitude_rate_profiles",
+    "combine_rate_profile_rows",
     "compute_heating_rate_profile",
     "compute_ionization_rate_profile",
     "compute_lyman_alpha_emission_profile",
     "flux_weight_per_particle",
-    "plot_altitude_rate_profiles",
+    "plot_rate_profiles",
     "write_rate_profile_csv",
     "run_one_monte_carlo_particle",
     "summarize_monte_carlo_rows",
