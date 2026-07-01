@@ -140,12 +140,13 @@ may pass through or collide elastically, but only sampled collision events with
 `reaction = ionization` contribute:
 
 ```text
-q_j(r) = sum_ionization_events_on_target_j [W_i * v_r,i / dz]
+q_j(r) = n_j(r) * sum_ionization_events_on_target_j [W_i * v_r,i * sigma_j(E_i)]
 ```
 
-Here `W_i` has units of `m^-3`, `v_r` has units of `m s^-1`, and `dz` has units
-of `m`, so `q_j` has units of `m^-3 s^-1`. H-ENA particles inherit the same
-weight after charge exchange, so both H+ and H-ENA ionization events are kept.
+Here `W_i` has units of `m^-3`, `v_r` has units of `m s^-1`, `sigma_j` has
+units of `m^2`, and `n_j` has units of `m^-3`, so `q_j` has units of
+`m^-3 s^-1`. H-ENA particles inherit the same weight after charge exchange,
+so both H+ and H-ENA ionization events are kept.
 The CSV separates target species and projectile contributions, for example
 `ionization_rate_Hplus_CO2_m-3_s-1` and
 `ionization_rate_HENA_CO2_m-3_s-1`.
