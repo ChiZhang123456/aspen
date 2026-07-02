@@ -1,33 +1,33 @@
-# aspen
+# py_aspen
 
-`aspen` is a lightweight Python package for ASPEN-style Mars H/H+ collision calculations.
+`py_aspen` is a lightweight Python package for ASPEN-style Mars H/H+ collision calculations.
 
 The package is organized around atmosphere and cross-section based collision tools:
 
 ```text
-aspen.neutral_density_model
-aspen.collisions
+py_aspen.neutral_density_model
+py_aspen.collisions
 ```
 
 It is split into review-friendly modules:
 
 ```text
-aspen/neutral_density_model/gitm.py
-aspen/neutral_density_model/amps.py
-aspen/neutral_density_model/__init__.py
-aspen/neutral_density_model/data/*.mat
-aspen/collisions/cross_section.py
-aspen/collisions/collision_frequency.py
-aspen/collisions/collision_sampler.py
-aspen/collisions/elastic_collision.py
-aspen/collisions/scattering_angle.py
-aspen/collisions/*.txt
+py_aspen/neutral_density_model/gitm.py
+py_aspen/neutral_density_model/amps.py
+py_aspen/neutral_density_model/__init__.py
+py_aspen/neutral_density_model/data/*.mat
+py_aspen/collisions/cross_section.py
+py_aspen/collisions/collision_frequency.py
+py_aspen/collisions/collision_sampler.py
+py_aspen/collisions/elastic_collision.py
+py_aspen/collisions/scattering_angle.py
+py_aspen/collisions/*.txt
 ```
 
 The subpackage provides three main functions:
 
 ```python
-from aspen import neutral_density, cross_section, collision_frequency
+from py_aspen import neutral_density, cross_section, collision_frequency
 ```
 
 ## 1. Local neutral density
@@ -87,7 +87,7 @@ Returns:
 By default, cross sections are read from the package data folder:
 
 ```text
-aspen/collisions
+py_aspen/collisions
 ```
 
 The `.txt` files were copied from the extracted reference tables under
@@ -124,7 +124,7 @@ For `H`, `state_change` means electron stripping, `H -> H+`.
 
 For `H+`, `state_change` means charge exchange, `H+ -> H`.
 
-The default Monte Carlo reaction sampler uses the four core ASPEN channels:
+The default Monte Carlo reaction sampler uses the four core py_aspen channels:
 
 ```text
 elastic
@@ -178,12 +178,12 @@ breakdown               = per target and reaction contribution
 
 Here `v` is computed from particle energy using the hydrogen mass. Neutral
 densities are evaluated with the packaged MGITM + MAMPS model in
-`aspen/neutral_density_model`; `O = O_cold + O_hot` when `include_hot_o=True`.
+`py_aspen/neutral_density_model`; `O = O_cold + O_hot` when `include_hot_o=True`.
 
 ## 4. Scattering angle
 
 ```python
-from aspen import scattering_angle
+from py_aspen import scattering_angle
 
 theta_deg = scattering_angle(0.99)
 ```
@@ -191,7 +191,7 @@ theta_deg = scattering_angle(0.99)
 This reads:
 
 ```text
-aspen/collisions/scattering_angle_distribution.txt
+py_aspen/collisions/scattering_angle_distribution.txt
 ```
 
 The table is treated as an inverse-CDF style mapping from random number to
@@ -200,7 +200,7 @@ LAB-frame scattering angle.
 ## 5. Elastic collision energy loss
 
 ```python
-from aspen import elastic_collision_after_scattering
+from py_aspen import elastic_collision_after_scattering
 
 out = elastic_collision_after_scattering(
     projectile="H",
@@ -232,7 +232,7 @@ velocity. The optional `azimuth_angle` selects the scattering plane.
 ## 6. Chemical reaction outcomes
 
 ```python
-from aspen import electron_stripping, ionization, lyman_alpha_emission
+from py_aspen import electron_stripping, ionization, lyman_alpha_emission
 
 out = electron_stripping(
     projectile="H",
@@ -260,7 +260,7 @@ state, post-collision projectile velocity, cross section, local coefficient
 ## 7. Sample collision target and reaction
 
 ```python
-from aspen import sample_collision_event
+from py_aspen import sample_collision_event
 
 event = sample_collision_event(
     density_m3={"CO2": 2.9e13, "O": 3.3e13},
@@ -301,7 +301,7 @@ lya
 ## 8. Apply one sampled collision to a particle
 
 ```python
-from aspen import Particle, apply_random_collision_to_particle
+from py_aspen import Particle, apply_random_collision_to_particle
 
 p = Particle(
     projectile="H",
@@ -335,8 +335,8 @@ exchange.
 ## 9. Numba adaptive transport loop
 
 ```python
-from aspen import Particle, advance_particle_until_collision_from_position_numba
-from aspen.constants import MARS_RADIUS_KM
+from py_aspen import Particle, advance_particle_until_collision_from_position_numba
+from py_aspen.constants import MARS_RADIUS_KM
 
 p = Particle(
     projectile="H",

@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-"""Run one ASPEN particle example and plot the result.
+"""Run one py_aspen particle example and plot the result.
 
 Run from the project root with:
 
-    python -m aspen
+    python -m py_aspen
 """
 
 from pathlib import Path
 
 import numpy as np
 
-from aspen.constants import MARS_RADIUS_KM
-from aspen import (
+from py_aspen.constants import MARS_RADIUS_KM
+from py_aspen import (
     Particle,
     flatten_trace_history,
     particle_altitude_km,

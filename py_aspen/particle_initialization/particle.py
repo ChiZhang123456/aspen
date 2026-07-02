@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-"""Particle state containers used by ASPEN Monte Carlo transport."""
+"""Particle state containers used by py_aspen Monte Carlo transport."""
 
 from dataclasses import dataclass, field
 
 import numpy as np
 
-from aspen.collisions.cross_section import normalize_projectile
+from py_aspen.collisions.cross_section import normalize_projectile
 
 
 def _as_vector3(value: object, name: str) -> np.ndarray:
@@ -42,7 +42,7 @@ class Particle:
     velocity
         Particle velocity vector, usually in m/s.
     position
-        Particle position vector in m. For ASPEN MSO transport this is
+        Particle position vector in m. For py_aspen MSO transport this is
         Mars-centered Cartesian `Pmso_xyz`.
     R
         One random number in [0, 1) assigned at initialization.

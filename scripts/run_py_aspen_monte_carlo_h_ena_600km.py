@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from aspen import MonteCarloConfig, run_one_monte_carlo_particle, summarize_monte_carlo_rows
+from py_aspen import MonteCarloConfig, run_one_monte_carlo_particle, summarize_monte_carlo_rows
 
 
 def _run_particle(args: tuple[int, MonteCarloConfig]) -> dict[str, object]:
@@ -80,7 +80,7 @@ def plot_summary(rows: list[dict[str, object]], filename: Path) -> None:
 
     for ax in axes.ravel():
         ax.grid(True, alpha=0.25)
-    fig.suptitle("ASPEN Monte Carlo, H-ENA, 600 km, V = [-400, 0, 0] km/s")
+    fig.suptitle("py_aspen Monte Carlo, H-ENA, 600 km, V = [-400, 0, 0] km/s")
     filename.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(filename, dpi=200)
     plt.close(fig)
@@ -88,7 +88,7 @@ def plot_summary(rows: list[dict[str, object]], filename: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Run ASPEN Monte Carlo H-ENA particles from 600 km."
+        description="Run py_aspen Monte Carlo H-ENA particles from 600 km."
     )
     parser.add_argument("--n-particles", type=int, default=5000)
     parser.add_argument("--workers", type=int, default=1)
@@ -103,7 +103,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     if args.max_step_m > 1000.0:
-        raise ValueError("max_step_m must be <= 1000 m for ASPEN production runs.")
+        raise ValueError("max_step_m must be <= 1000 m for py_aspen production runs.")
 
     config = MonteCarloConfig(
         n_particles=args.n_particles,

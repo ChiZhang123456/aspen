@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from aspen import (  # noqa: E402
+from py_aspen import (  # noqa: E402
     MonteCarloConfig,
     Particle,
     combine_rate_profile_rows,
@@ -27,8 +27,8 @@ from aspen import (  # noqa: E402
     write_history_csv,
     write_rate_profile_csv,
 )
-from aspen.rates import altitude_bin_edges  # noqa: E402
-from aspen.simulation.particle_state import particle_altitude_km, particle_energy_ev  # noqa: E402
+from py_aspen.rates import altitude_bin_edges  # noqa: E402
+from py_aspen.simulation.particle_state import particle_altitude_km, particle_energy_ev  # noqa: E402
 
 
 def _collision_counts(collisions: list[dict[str, object]]) -> dict[str, int]:
@@ -144,7 +144,7 @@ def write_csv(rows: list[dict[str, object]], filename: Path) -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Run 1000 ASPEN particles and compute altitude rate profiles."
+        description="Run 1000 py_aspen particles and compute altitude rate profiles."
     )
     parser.add_argument("--n-particles", type=int, default=1000)
     parser.add_argument("--workers", type=int, default=8)
@@ -167,7 +167,7 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=Path("aspen_examples") / "monte_carlo_rates_1000")
     args = parser.parse_args()
     if args.max_step_m > 1000.0:
-        raise ValueError("max_step_m must be <= 1000 m for ASPEN production runs.")
+        raise ValueError("max_step_m must be <= 1000 m for py_aspen production runs.")
 
     config = MonteCarloConfig(
         n_particles=args.n_particles,

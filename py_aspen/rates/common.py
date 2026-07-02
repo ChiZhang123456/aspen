@@ -6,7 +6,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 import numpy as np
 
-from aspen.neutral_density_model import neutral_density_xyz
+from py_aspen.neutral_density_model import neutral_density_xyz
 
 
 def altitude_bin_edges(

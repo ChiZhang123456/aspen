@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from aspen import (  # noqa: E402
+from py_aspen import (  # noqa: E402
     Particle,
     flatten_trace_history,
     particle_altitude_km,
@@ -18,7 +18,7 @@ from aspen import (  # noqa: E402
     trace_particle_xyz_until_stop,
     write_history_csv,
 )
-from aspen.constants import MARS_RADIUS_KM  # noqa: E402
+from py_aspen.constants import MARS_RADIUS_KM  # noqa: E402
 
 
 def main() -> None:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Numba accelerated adaptive transport step for ASPEN particles.
+"""Numba accelerated adaptive transport step for py_aspen particles.
 
 The cumulative value compared with the particle random number is an
 optical-depth-like integral, `tau = integral alpha ds`, where
@@ -13,9 +13,9 @@ from typing import Mapping
 
 import numpy as np
 
-from aspen.constants import ELEMENTARY_CHARGE_C, MARS_RADIUS_KM
-from aspen.collisions.collision_sampler import SAMPLE_REACTIONS
-from aspen.collisions.cross_section import (
+from py_aspen.constants import ELEMENTARY_CHARGE_C, MARS_RADIUS_KM
+from py_aspen.collisions.collision_sampler import SAMPLE_REACTIONS
+from py_aspen.collisions.cross_section import (
     DEFAULT_CROSS_SECTION_DIR,
     PROJECTILE_INDEX,
     REACTION_INDEX,
@@ -24,10 +24,10 @@ from aspen.collisions.cross_section import (
     load_cross_sections,
     normalize_target,
 )
-from aspen.collisions.elastic_collision import MASS_KG
-from aspen.collisions.particle_collision import apply_random_collision_to_particle
-from aspen.neutral_density_model import neutral_density
-from aspen.particle_initialization import Particle
+from py_aspen.collisions.elastic_collision import MASS_KG
+from py_aspen.collisions.particle_collision import apply_random_collision_to_particle
+from py_aspen.neutral_density_model import neutral_density
+from py_aspen.particle_initialization import Particle
 
 
 H_MASS_KG = float(MASS_KG["H"])

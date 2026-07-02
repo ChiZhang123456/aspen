@@ -13,7 +13,7 @@ elastic collision occurs; that decision belongs to `collision_sampler.py`.
 
 import numpy as np
 
-from aspen.constants import ELEMENTARY_CHARGE_C
+from py_aspen.constants import ELEMENTARY_CHARGE_C
 
 from .cross_section import DEFAULT_CROSS_SECTION_DIR, cross_section, normalize_projectile, normalize_target
 

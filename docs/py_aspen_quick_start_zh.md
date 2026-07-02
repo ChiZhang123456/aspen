@@ -1,6 +1,6 @@
-# aspen quick start
+# py_aspen quick start
 
-This note shows the shortest workflow for running one ASPEN test particle.
+This note shows the shortest workflow for running one py_aspen test particle.
 
 ## 1. Run from the project root
 
@@ -13,7 +13,7 @@ D:\Work_Work\Mars\MAVEN\iuvs_data_kp
 Use the Mars Python environment:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B -m aspen
+& C:\Users\Win\.conda\envs\mars\python.exe -B -m py_aspen
 ```
 
 The same example can also be run from the script:
@@ -47,14 +47,14 @@ Charge-state changes do not stop tracing. If H-ENA becomes H+, or H+ becomes H-E
 ```python
 import numpy as np
 
-from aspen import (
+from py_aspen import (
     Particle,
     flatten_trace_history,
     plot_particle_trace_history,
     trace_particle_xyz_until_stop,
     write_history_csv,
 )
-from aspen.constants import MARS_RADIUS_KM
+from py_aspen.constants import MARS_RADIUS_KM
 
 rng = np.random.default_rng(7)
 

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-"""MGITM cold-neutral density model for ASPEN.
+"""MGITM cold-neutral density model for py_aspen.
 
 This module reads the packaged MGITM `.mat` files in
-`aspen/neutral_density_model/data`. These `.mat` files were converted from:
+`py_aspen/neutral_density_model/data`. These `.mat` files were converted from:
 
     D:/Work_Work/Mars/MAVEN/test_particle_jl/neutral/MGITM/MGITM_LS*_F*.dat
 
@@ -58,7 +58,7 @@ from typing import Iterable
 import numpy as np
 from scipy.io import loadmat
 
-from aspen.constants import MARS_RADIUS_KM
+from py_aspen.constants import MARS_RADIUS_KM
 
 
 DATA_DIR = Path(__file__).resolve().parent / "data"

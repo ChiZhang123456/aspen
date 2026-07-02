@@ -6,7 +6,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 import numpy as np
 
-from aspen.collisions.cross_section import TARGETS
+from py_aspen.collisions.cross_section import TARGETS
 
 from .common import as_float, bin_index, event_rate_weight, validate_altitude_edges
 

@@ -6,8 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
-from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
-from aspen.particle_initialization import Particle
+from py_aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
+from py_aspen.particle_initialization import Particle
 
 from .adaptive_step import advance_particle_until_collision_xyz
 from .particle_state import should_stop_tracing

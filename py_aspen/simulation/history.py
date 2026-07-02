@@ -7,8 +7,8 @@ import csv
 
 import numpy as np
 
-from aspen.constants import MARS_RADIUS_KM
-from aspen.particle_initialization import Particle
+from py_aspen.constants import MARS_RADIUS_KM
+from py_aspen.particle_initialization import Particle
 
 from .particle_state import particle_energy_ev, particle_altitude_km
 

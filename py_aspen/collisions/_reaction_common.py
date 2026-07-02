@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-"""Shared helpers for non-elastic ASPEN collision reactions."""
+"""Shared helpers for non-elastic py_aspen collision reactions."""
 
 from pathlib import Path
 
 import numpy as np
 
-from aspen.constants import ELEMENTARY_CHARGE_C
+from py_aspen.constants import ELEMENTARY_CHARGE_C
 
 from .cross_section import DEFAULT_CROSS_SECTION_DIR, cross_section, normalize_target
 from .elastic_collision import MASS_KG, _orthonormal_basis

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
-from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS, cross_section
+from py_aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS, cross_section
 
 from .common import (
     as_float,

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Monte Carlo particle ensembles for ASPEN transport."""
+"""Monte Carlo particle ensembles for py_aspen transport."""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -8,10 +8,10 @@ from typing import Iterable
 
 import numpy as np
 
-from aspen.constants import MARS_RADIUS_KM
-from aspen.collisions.collision_frequency import speed_from_energy
-from aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
-from aspen.particle_initialization import Particle
+from py_aspen.constants import MARS_RADIUS_KM
+from py_aspen.collisions.collision_frequency import speed_from_energy
+from py_aspen.collisions.cross_section import DEFAULT_CROSS_SECTION_DIR, TARGETS
+from py_aspen.particle_initialization import Particle
 
 from .particle_state import particle_altitude_km, particle_energy_ev
 from .tracing import trace_particle_xyz_until_stop
@@ -19,7 +19,7 @@ from .tracing import trace_particle_xyz_until_stop
 
 @dataclass(frozen=True)
 class MonteCarloConfig:
-    """Configuration for one ASPEN Monte Carlo particle ensemble."""
+    """Configuration for one py_aspen Monte Carlo particle ensemble."""
 
     n_particles: int = 5000
     initial_projectile: str = "H-ENA"

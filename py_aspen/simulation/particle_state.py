@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from aspen.constants import ELEMENTARY_CHARGE_C, MARS_RADIUS_KM
-from aspen.collisions.elastic_collision import MASS_KG
-from aspen.particle_initialization import Particle
+from py_aspen.constants import ELEMENTARY_CHARGE_C, MARS_RADIUS_KM
+from py_aspen.collisions.elastic_collision import MASS_KG
+from py_aspen.particle_initialization import Particle
 
 
 def particle_energy_ev(particle: Particle) -> float:

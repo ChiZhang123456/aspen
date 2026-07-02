@@ -1,4 +1,4 @@
-# aspen
+# py_aspen
 
 ASPEN-style Monte Carlo transport tools for Mars proton aurora test particles.
 
@@ -12,7 +12,7 @@ collision probability.
 Run from the repository root:
 
 ```powershell
-& C:\Users\Win\.conda\envs\mars\python.exe -B -m aspen
+& C:\Users\Win\.conda\envs\mars\python.exe -B -m py_aspen
 ```
 
 The same example can also be run from the script:
@@ -40,14 +40,14 @@ aspen_examples/single_particle_main
 ```python
 import numpy as np
 
-from aspen import (
+from py_aspen import (
     Particle,
     flatten_trace_history,
     plot_particle_trace_history,
     trace_particle_xyz_until_stop,
     write_history_csv,
 )
-from aspen.constants import MARS_RADIUS_KM
+from py_aspen.constants import MARS_RADIUS_KM
 
 rng = np.random.default_rng(7)
 

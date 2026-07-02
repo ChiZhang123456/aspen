@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-"""MAMPS hot-oxygen density model for ASPEN.
+"""MAMPS hot-oxygen density model for py_aspen.
 
 This module reads the packaged MAMPS `.mat` files in
-`aspen/neutral_density_model/data`. These `.mat` files were converted from:
+`py_aspen/neutral_density_model/data`. These `.mat` files were converted from:
 
     D:/Work_Work/Mars/MAVEN/test_particle_jl/neutral/MAMPS/MAMPS_LS*_F*.dat
 
@@ -208,7 +208,7 @@ def amps_density_xyz(
 
     Examples
     --------
-    >>> from aspen.constants import MARS_RADIUS_KM
+    >>> from py_aspen.constants import MARS_RADIUS_KM
     >>> rho = amps_density_xyz(MARS_RADIUS_KM + 1000.0, 0.0, 0.0)
     >>> rho["O_hot"]  # density at lon=0, lat=0, alt=1000 km
     """
